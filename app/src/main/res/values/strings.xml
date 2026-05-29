@@ -11,6 +11,8 @@
     <string name="no_data">Empty Data</string>
     <string name="detail_name">Arsenal</string>
     <string name="founded_in">Founded in 1999</string>
+    <string name="founded_in_format">Founded in %1$s</string>
     <string name="detail_tittle">Arsenal FC</string>
     <string name="category">Soccer</string>
+    <string name="team_badge">Team badge</string>
 </resources>

@@ -20,14 +20,16 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .take(1)
-            .subscribe { value ->
-                dbSource.unsubscribeOn(Schedulers.io())
+            .subscribe({ value ->
                 if (shouldFetch(value)) {
                     fetchFromNetwork()
                 } else {
                     result.onNext(Resource.Success(value))
                 }
-            }
+            }, { error ->
+                onFetchFailed()
+                result.onNext(Resource.Error(error.message ?: "Unknown error", null))
+            })
         mCompositeDisposable.add(db)
     }
 
@@ -60,6 +62,9 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
                             .take(1)
                             .subscribe({ newData ->
                                 result.onNext(Resource.Success(newData))
+                            }, { error ->
+                                onFetchFailed()
+                                result.onNext(Resource.Error(error.message ?: "Unknown error", null))
                             })
                         mCompositeDisposable.add(dbSub)
                     }
@@ -70,6 +75,9 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
                             .take(1)
                             .subscribe({ emptyData ->
                                 result.onNext(Resource.Success(emptyData))
+                            }, { error ->
+                                onFetchFailed()
+                                result.onNext(Resource.Error(error.message ?: "Unknown error", null))
                             })
                         mCompositeDisposable.add(dbSub)
                     }

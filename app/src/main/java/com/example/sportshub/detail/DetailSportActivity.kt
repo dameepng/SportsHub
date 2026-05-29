@@ -42,7 +42,7 @@ class DetailSportActivity : AppCompatActivity() {
             supportActionBar?.title = detailSport.strTeam
             binding.categoryBadge.text = detailSport.strSport
             binding.fullName.text = detailSport.strTeam
-            binding.subtitleText.text = "Founded in ${detailSport.intFormedYear}"
+            binding.subtitleText.text = getString(R.string.founded_in_format, detailSport.intFormedYear)
             binding.content.teamName.text = detailSport.strTeam
             binding.content.articleContent.text = detailSport.strDescriptionEN ?: ""
             Glide.with(this@DetailSportActivity)

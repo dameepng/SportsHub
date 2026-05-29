@@ -1,11 +1,11 @@
 package com.example.sportshub
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.example.sportshub.databinding.ActivityMainBinding
@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun openFavoriteFeature() {
-        val favoriteUri = Uri.parse("sportshub://favorite")
+        val favoriteUri = "sportshub://favorite".toUri()
         val intent = Intent(Intent.ACTION_VIEW, favoriteUri)
         startActivity(intent)
     }

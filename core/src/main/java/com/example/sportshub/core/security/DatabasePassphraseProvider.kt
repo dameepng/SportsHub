@@ -1,10 +1,10 @@
 package com.example.sportshub.core.security
 
 import android.content.Context
-import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import androidx.core.content.edit
 import java.security.KeyStore
 import java.security.SecureRandom
 import javax.crypto.Cipher
@@ -33,9 +33,9 @@ object DatabasePassphraseProvider {
 
         val passphrase = ByteArray(PASSPHRASE_SIZE)
         SecureRandom().nextBytes(passphrase)
-        prefs.edit()
-            .putString(PASSPHRASE_KEY, encrypt(passphrase))
-            .apply()
+        prefs.edit {
+            putString(PASSPHRASE_KEY, encrypt(passphrase))
+        }
 
         return passphrase
     }
@@ -84,11 +84,7 @@ object DatabasePassphraseProvider {
             .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
             .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
             .setRandomizedEncryptionRequired(true)
-            .apply {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    setUnlockedDeviceRequired(true)
-                }
-            }
+            .setUnlockedDeviceRequired(true)
             .build()
 
         keyGenerator.init(keySpec)
