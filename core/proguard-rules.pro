@@ -29,6 +29,9 @@
 -dontwarn net.sqlcipher.**
 -keep class net.sqlcipher.** { *; }
 -keep class net.sqlcipher.database.** { *; }
+-dontwarn net.zetetic.database.**
+-keep class net.zetetic.database.** { *; }
+-keep class net.zetetic.database.sqlcipher.** { *; }
 
 -dontwarn org.bouncycastle.jsse.**
 -dontwarn org.conscrypt.**

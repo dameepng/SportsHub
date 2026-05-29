@@ -64,6 +64,7 @@ dependencies {
     kapt(libs.androidx.room.compiler)
     androidTestImplementation(libs.androidx.room.testing)
     implementation(libs.androidx.room.rxjava2)
+    implementation(libs.androidx.sqlite)
     implementation(libs.sqlcipher.android)
 
     implementation(libs.retrofit)

@@ -9,7 +9,7 @@ import com.example.sportshub.core.data.source.remote.network.ApiService
 import com.example.sportshub.core.domain.repository.ISportRepository
 import com.example.sportshub.core.security.DatabasePassphraseProvider
 import com.example.sportshub.core.utils.AppExecutors
-import net.sqlcipher.database.SupportFactory
+import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import okhttp3.CertificatePinner
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -30,7 +30,7 @@ val databaseModule = module {
             SPORT_DATABASE_NAME
         )
         val passphrase = DatabasePassphraseProvider.getPassphrase(androidContext())
-        val supportFactory = SupportFactory(passphrase)
+        val supportFactory = SupportOpenHelperFactory(passphrase)
         Room.databaseBuilder(
             androidContext(),
             SportDatabase::class.java, SPORT_DATABASE_NAME
