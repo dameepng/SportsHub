@@ -19,3 +19,17 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class com.example.sportshub.core.data.source.remote.response.** { *; }
+-keep class com.example.sportshub.core.data.source.local.entity.** { *; }
+-keep class com.example.sportshub.core.domain.model.** { *; }
+-keep interface com.example.sportshub.core.data.source.remote.network.ApiService { *; }
+-keepattributes Signature,*Annotation*
+
+-dontwarn net.sqlcipher.**
+-keep class net.sqlcipher.** { *; }
+-keep class net.sqlcipher.database.** { *; }
+
+-dontwarn org.bouncycastle.jsse.**
+-dontwarn org.conscrypt.**
+-dontwarn org.openjsse.**

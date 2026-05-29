@@ -7,7 +7,10 @@ import com.example.sportshub.core.data.source.local.room.SportDatabase
 import com.example.sportshub.core.data.source.remote.RemoteDataSource
 import com.example.sportshub.core.data.source.remote.network.ApiService
 import com.example.sportshub.core.domain.repository.ISportRepository
+import com.example.sportshub.core.security.DatabasePassphraseProvider
 import com.example.sportshub.core.utils.AppExecutors
+import net.sqlcipher.database.SupportFactory
+import okhttp3.CertificatePinner
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -20,16 +23,30 @@ import java.util.concurrent.TimeUnit
 val databaseModule = module {
     factory { get<SportDatabase>().sportDao() }
     single {
+        val passphrase = DatabasePassphraseProvider.getPassphrase(androidContext())
+        val supportFactory = SupportFactory(passphrase)
         Room.databaseBuilder(
             androidContext(),
             SportDatabase::class.java, "Sport.db"
-        ).fallbackToDestructiveMigration(true).build()
+        )
+            .openHelperFactory(supportFactory)
+            .fallbackToDestructiveMigration(true)
+            .build()
     }
 }
 
 val networkModule = module {
     single {
+        val certificatePinner = CertificatePinner.Builder()
+            .add(
+                "www.thesportsdb.com",
+                "sha256/H7mAMOV8siGjb14MWbJo0WZO0Fr0uiFZVX1bzdUGC6I=",
+                "sha256/kIdp6NNEd8wsugYyyIYFsi1ylMCED3hZbSR8ZFsa/A4="
+            )
+            .build()
+
         OkHttpClient.Builder()
+            .certificatePinner(certificatePinner)
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .connectTimeout(120, TimeUnit.SECONDS)
             .readTimeout(120, TimeUnit.SECONDS)

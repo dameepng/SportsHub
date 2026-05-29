@@ -1,0 +1,1 @@
+-keep class com.example.sportshub.core.domain.model.** { *; }
