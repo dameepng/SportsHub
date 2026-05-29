@@ -18,6 +18,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class HomeFragment : Fragment() {
 
+    private companion object {
+        const val DEFAULT_SPORT = "Soccer"
+        const val DEFAULT_COUNTRY = "Spain"
+    }
+
     private val homeViewModel: HomeViewModel by viewModel()
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -48,7 +53,7 @@ class HomeFragment : Fragment() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (!query.isNullOrEmpty()) {
-                    searchTeam("Soccer", "Spain", sportAdapter, query)
+                    searchTeam(sportAdapter, query)
                 }
                 return true
             }
@@ -56,11 +61,11 @@ class HomeFragment : Fragment() {
             override fun onQueryTextChange(newText: String?): Boolean = false
         })
 
-        searchTeam("Soccer", "Spain", sportAdapter)
+        searchTeam(sportAdapter)
     }
 
-    private fun searchTeam(sport: String, country: String, adapter: SportAdapter, teamName: String? = null) {
-        homeViewModel.getSports(sport, country).observe(viewLifecycleOwner) { sportResource: Resource<List<Sport>>? ->
+    private fun searchTeam(adapter: SportAdapter, teamName: String? = null) {
+        homeViewModel.getSports(DEFAULT_SPORT, DEFAULT_COUNTRY).observe(viewLifecycleOwner) { sportResource: Resource<List<Sport>>? ->
             if (sportResource != null) {
                 when (sportResource) {
                     is Resource.Loading -> binding.progressBar.visibility = View.VISIBLE

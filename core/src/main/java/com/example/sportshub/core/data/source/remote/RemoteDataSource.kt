@@ -14,7 +14,7 @@ class RemoteDataSource(private val apiService: ApiService) {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .take(1)
-            .map<ApiResponse<SportResponse>> { response ->
+            .map { response ->
                 if (response.teams.isNullOrEmpty()) {
                     ApiResponse.Empty
                 } else {

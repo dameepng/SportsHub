@@ -27,13 +27,9 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
                     result.onNext(Resource.Success(value))
                 }
             }, { error ->
-                onFetchFailed()
                 result.onNext(Resource.Error(error.message ?: "Unknown error", null))
             })
         mCompositeDisposable.add(db)
-    }
-
-    protected open fun onFetchFailed() {
     }
 
     protected abstract fun loadFromDB(): Flowable<ResultType>
@@ -63,7 +59,6 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
                             .subscribe({ newData ->
                                 result.onNext(Resource.Success(newData))
                             }, { error ->
-                                onFetchFailed()
                                 result.onNext(Resource.Error(error.message ?: "Unknown error", null))
                             })
                         mCompositeDisposable.add(dbSub)
@@ -76,18 +71,15 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
                             .subscribe({ emptyData ->
                                 result.onNext(Resource.Success(emptyData))
                             }, { error ->
-                                onFetchFailed()
                                 result.onNext(Resource.Error(error.message ?: "Unknown error", null))
                             })
                         mCompositeDisposable.add(dbSub)
                     }
                     is ApiResponse.Error -> {
-                        onFetchFailed()
                         result.onNext(Resource.Error(response.errorMessage, null))
                     }
                 }
             }, { error ->
-                onFetchFailed()
                 result.onNext(Resource.Error(error.message ?: "Unknown error", null))
             })
 

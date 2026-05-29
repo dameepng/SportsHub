@@ -9,7 +9,6 @@ import com.example.sportshub.core.domain.repository.ISportRepository
 import com.example.sportshub.core.utils.AppExecutors
 import com.example.sportshub.core.utils.DataMapper
 import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class SportRepository(
@@ -26,7 +25,7 @@ class SportRepository(
             }
 
             override fun shouldFetch(data: List<Sport>?): Boolean {
-                return data == null || data.isEmpty()
+                return data.isNullOrEmpty()
             }
 
             override fun createCall(): Flowable<ApiResponse<SportResponse>> =

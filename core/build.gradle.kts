@@ -5,8 +5,6 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
 }
 
-apply(from = "../shared_dependencies.gradle")
-
 android {
     namespace = "com.example.sportshub.core"
     compileSdk = 34
@@ -47,22 +45,15 @@ dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
     implementation(libs.kotlin.stdlib)
-    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.legacy.support.v4)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.cardview)
     implementation(libs.androidx.recyclerview)
     implementation(libs.material)
     implementation(libs.glide)
-    kapt(libs.glide.compiler)
 
     implementation(libs.androidx.room.runtime)
     kapt(libs.androidx.room.compiler)
-    androidTestImplementation(libs.androidx.room.testing)
     implementation(libs.androidx.room.rxjava2)
     implementation(libs.androidx.sqlite)
     implementation(libs.sqlcipher.android)
@@ -74,11 +65,8 @@ dependencies {
 
     implementation(libs.rxjava)
     implementation(libs.rxandroid)
-    implementation(libs.androidx.lifecycle.reactivestreams.ktx)
-
-    implementation(libs.androidx.work.runtime)
 
     implementation(libs.koin.core)
     implementation(libs.koin.android)
-    implementation(libs.koin.androidx.workmanager)
+    testImplementation(libs.junit)
 }
