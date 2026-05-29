@@ -49,5 +49,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.reactivestreams.ktx)
     implementation(libs.koin.core)
     implementation(libs.koin.android)
+    androidTestImplementation(libs.androidx.junit.ktx)
     testImplementation(libs.junit)
+    androidTestImplementation(libs.junit.junit)
 }

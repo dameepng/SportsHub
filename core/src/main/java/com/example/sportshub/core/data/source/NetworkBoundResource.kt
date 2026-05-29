@@ -88,4 +88,5 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
 
     fun asFlowable(): Flowable<Resource<ResultType>> =
         result.toFlowable(BackpressureStrategy.BUFFER)
+            .doFinally { mCompositeDisposable.clear() }
 }

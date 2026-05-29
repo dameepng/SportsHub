@@ -26,6 +26,8 @@ class HomeFragment : Fragment() {
     private val homeViewModel: HomeViewModel by viewModel()
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+    private val sportAdapter = SportAdapter()
+    private var sports = emptyList<Sport>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,7 +39,6 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val sportAdapter = SportAdapter()
         sportAdapter.onItemClick = { selectedData ->
             val intent = Intent(requireContext(), DetailSportActivity::class.java)
             intent.putExtra(DetailSportActivity.EXTRA_DATA, selectedData)
@@ -52,31 +53,33 @@ class HomeFragment : Fragment() {
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                if (!query.isNullOrEmpty()) {
-                    searchTeam(sportAdapter, query)
-                }
+                filterTeam(query)
+                binding.searchView.clearFocus()
                 return true
             }
 
-            override fun onQueryTextChange(newText: String?): Boolean = false
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterTeam(newText)
+                return true
+            }
         })
 
-        searchTeam(sportAdapter)
+        observeSports()
     }
 
-    private fun searchTeam(adapter: SportAdapter, teamName: String? = null) {
+    private fun observeSports() {
         homeViewModel.getSports(DEFAULT_SPORT, DEFAULT_COUNTRY).observe(viewLifecycleOwner) { sportResource: Resource<List<Sport>>? ->
             if (sportResource != null) {
                 when (sportResource) {
-                    is Resource.Loading -> binding.progressBar.visibility = View.VISIBLE
+                    is Resource.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.viewError.root.visibility = View.GONE
+                    }
                     is Resource.Success -> {
                         binding.progressBar.visibility = View.GONE
-                        val filteredData = if (teamName != null) {
-                            sportResource.data?.filter { it.strTeam?.contains(teamName, ignoreCase = true) == true }
-                        } else {
-                            sportResource.data
-                        }
-                        adapter.setData(filteredData)
+                        binding.viewError.root.visibility = View.GONE
+                        sports = sportResource.data.orEmpty()
+                        filterTeam(binding.searchView.query?.toString())
                     }
                     is Resource.Error -> {
                         binding.progressBar.visibility = View.GONE
@@ -89,8 +92,18 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun filterTeam(teamName: String?) {
+        val filteredData = if (teamName.isNullOrBlank()) {
+            sports
+        } else {
+            sports.filter { it.strTeam?.contains(teamName, ignoreCase = true) == true }
+        }
+        sportAdapter.setData(filteredData)
+    }
+
     override fun onDestroyView() {
         binding.searchView.setOnQueryTextListener(null)
+        sportAdapter.onItemClick = null
         binding.rvTeam.adapter = null
         super.onDestroyView()
         _binding = null

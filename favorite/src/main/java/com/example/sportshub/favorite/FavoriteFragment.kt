@@ -53,6 +53,7 @@ class FavoriteFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        (binding.rvTeam.adapter as? SportAdapter)?.onItemClick = null
         binding.rvTeam.adapter = null
         super.onDestroyView()
         unloadKoinModules(favoriteModule)
