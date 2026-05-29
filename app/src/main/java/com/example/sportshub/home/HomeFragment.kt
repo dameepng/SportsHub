@@ -38,6 +38,8 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        showLoading()
+
         sportAdapter.onItemClick = { selectedData ->
             startActivity(DetailSportActivity.createIntent(requireContext(), selectedData))
         }
@@ -68,15 +70,13 @@ class HomeFragment : Fragment() {
         homeViewModel.getSports(DEFAULT_SPORT, DEFAULT_COUNTRY).observe(viewLifecycleOwner) { sportResource: Resource<List<Sport>>? ->
             if (sportResource != null) {
                 when (sportResource) {
-                    is Resource.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                        binding.viewError.root.visibility = View.GONE
-                    }
+                    is Resource.Loading -> showLoading()
                     is Resource.Success -> {
                         binding.progressBar.visibility = View.GONE
-                        binding.viewError.root.visibility = View.GONE
                         sports = sportResource.data.orEmpty()
                         filterTeam(binding.searchView.query?.toString())
+                        binding.viewError.root.visibility = if (sports.isEmpty()) View.VISIBLE else View.GONE
+                        binding.viewError.tvError.text = getString(R.string.no_data)
                     }
                     is Resource.Error -> {
                         binding.progressBar.visibility = View.GONE
@@ -87,6 +87,11 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun showLoading() {
+        binding.progressBar.visibility = View.VISIBLE
+        binding.viewError.root.visibility = View.GONE
     }
 
     private fun filterTeam(teamName: String?) {

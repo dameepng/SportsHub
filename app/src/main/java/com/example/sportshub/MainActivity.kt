@@ -38,7 +38,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.nav_host_fragment, HomeFragment())
-                .commit()
+                .commitNow()
+            binding.navView.setCheckedItem(R.id.nav_home)
             supportActionBar?.title = getString(R.string.app_name)
         }
     }
