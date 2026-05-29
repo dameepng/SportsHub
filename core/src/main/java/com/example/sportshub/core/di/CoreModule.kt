@@ -25,6 +25,7 @@ private const val SPORT_DATABASE_NAME = "Sport.db"
 val databaseModule = module {
     factory { get<SportDatabase>().sportDao() }
     single {
+        System.loadLibrary("sqlcipher")
         DatabasePassphraseProvider.deleteLegacyPlaintextDatabase(
             androidContext(),
             SPORT_DATABASE_NAME
