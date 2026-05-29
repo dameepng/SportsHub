@@ -14,6 +14,7 @@ import javax.crypto.spec.GCMParameterSpec
 
 object DatabasePassphraseProvider {
 
+    private val SQLITE_HEADER = "SQLite format 3\u0000".toByteArray(Charsets.US_ASCII)
     private const val ANDROID_KEYSTORE = "AndroidKeyStore"
     private const val KEY_ALIAS = "sporthub_database_key"
     private const val PREFS_NAME = "sporthub_secure_database"
@@ -37,6 +38,20 @@ object DatabasePassphraseProvider {
             .apply()
 
         return passphrase
+    }
+
+    fun deleteLegacyPlaintextDatabase(context: Context, databaseName: String) {
+        val databaseFile = context.applicationContext.getDatabasePath(databaseName)
+        if (!databaseFile.exists() || databaseFile.length() < SQLITE_HEADER.size) return
+
+        val header = ByteArray(SQLITE_HEADER.size)
+        databaseFile.inputStream().use { inputStream ->
+            inputStream.read(header)
+        }
+
+        if (header.contentEquals(SQLITE_HEADER)) {
+            context.applicationContext.deleteDatabase(databaseName)
+        }
     }
 
     private fun encrypt(passphrase: ByteArray): String {

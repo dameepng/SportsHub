@@ -20,14 +20,20 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
+private const val SPORT_DATABASE_NAME = "Sport.db"
+
 val databaseModule = module {
     factory { get<SportDatabase>().sportDao() }
     single {
+        DatabasePassphraseProvider.deleteLegacyPlaintextDatabase(
+            androidContext(),
+            SPORT_DATABASE_NAME
+        )
         val passphrase = DatabasePassphraseProvider.getPassphrase(androidContext())
         val supportFactory = SupportFactory(passphrase)
         Room.databaseBuilder(
             androidContext(),
-            SportDatabase::class.java, "Sport.db"
+            SportDatabase::class.java, SPORT_DATABASE_NAME
         )
             .openHelperFactory(supportFactory)
             .fallbackToDestructiveMigration(true)
