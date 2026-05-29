@@ -1,6 +1,6 @@
 package com.example.sportshub.core.domain.usecase
 
-import com.example.sportshub.core.data.source.Resource
+import com.example.sportshub.core.domain.common.Resource
 import com.example.sportshub.core.domain.model.Sport
 import io.reactivex.Flowable
 

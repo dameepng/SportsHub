@@ -1,6 +1,7 @@
 package com.example.sportshub.detail
 
-import android.os.Build
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -13,7 +14,31 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class DetailSportActivity : AppCompatActivity() {
 
     companion object {
-        const val EXTRA_DATA = "extra_data"
+        private const val EXTRA_ID_TEAM = "extra_id_team"
+        private const val EXTRA_TEAM = "extra_team"
+        private const val EXTRA_TEAM_ALTERNATE = "extra_team_alternate"
+        private const val EXTRA_COUNTRY = "extra_country"
+        private const val EXTRA_SPORT = "extra_sport"
+        private const val EXTRA_BADGE = "extra_badge"
+        private const val EXTRA_FORMED_YEAR = "extra_formed_year"
+        private const val EXTRA_FANART = "extra_fanart"
+        private const val EXTRA_DESCRIPTION = "extra_description"
+        private const val EXTRA_IS_FAVORITE = "extra_is_favorite"
+
+        fun createIntent(context: Context, sport: Sport): Intent {
+            return Intent(context, DetailSportActivity::class.java).apply {
+                putExtra(EXTRA_ID_TEAM, sport.idTeam)
+                putExtra(EXTRA_TEAM, sport.strTeam)
+                putExtra(EXTRA_TEAM_ALTERNATE, sport.strTeamAlternate)
+                putExtra(EXTRA_COUNTRY, sport.strCountry)
+                putExtra(EXTRA_SPORT, sport.strSport)
+                putExtra(EXTRA_BADGE, sport.strBadge)
+                putExtra(EXTRA_FORMED_YEAR, sport.intFormedYear)
+                putExtra(EXTRA_FANART, sport.strFanart1)
+                putExtra(EXTRA_DESCRIPTION, sport.strDescriptionEN)
+                putExtra(EXTRA_IS_FAVORITE, sport.isFavorite)
+            }
+        }
     }
 
     private val detailSportViewModel: DetailSportViewModel by viewModel()
@@ -24,17 +49,26 @@ class DetailSportActivity : AppCompatActivity() {
         binding = ActivityDetailSportBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val detailSport = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(EXTRA_DATA, Sport::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra(EXTRA_DATA)
-        }
-        showDetailSport(detailSport)
+        showDetailSport(intent.toSport())
 
         binding.backButton.setOnClickListener {
             onBackPressed()
         }
+    }
+
+    private fun Intent.toSport(): Sport {
+        return Sport(
+            idTeam = getStringExtra(EXTRA_ID_TEAM),
+            strTeam = getStringExtra(EXTRA_TEAM),
+            strTeamAlternate = getStringExtra(EXTRA_TEAM_ALTERNATE),
+            strCountry = getStringExtra(EXTRA_COUNTRY),
+            strSport = getStringExtra(EXTRA_SPORT),
+            strBadge = getStringExtra(EXTRA_BADGE),
+            intFormedYear = getStringExtra(EXTRA_FORMED_YEAR),
+            strFanart1 = getStringExtra(EXTRA_FANART),
+            strDescriptionEN = getStringExtra(EXTRA_DESCRIPTION),
+            isFavorite = getBooleanExtra(EXTRA_IS_FAVORITE, false)
+        )
     }
 
     private fun showDetailSport(detailSport: Sport?) {

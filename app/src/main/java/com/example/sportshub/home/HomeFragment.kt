@@ -1,6 +1,5 @@
 package com.example.sportshub.home
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +8,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sportshub.R
-import com.example.sportshub.core.data.source.Resource
+import com.example.sportshub.core.domain.common.Resource
 import com.example.sportshub.core.domain.model.Sport
 import com.example.sportshub.core.ui.SportAdapter
 import com.example.sportshub.databinding.FragmentHomeBinding
@@ -40,9 +39,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         sportAdapter.onItemClick = { selectedData ->
-            val intent = Intent(requireContext(), DetailSportActivity::class.java)
-            intent.putExtra(DetailSportActivity.EXTRA_DATA, selectedData)
-            startActivity(intent)
+            startActivity(DetailSportActivity.createIntent(requireContext(), selectedData))
         }
 
         with(binding.rvTeam) {

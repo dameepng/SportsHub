@@ -2,7 +2,7 @@ package com.example.sportshub.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.example.sportshub.core.data.source.Resource
+import com.example.sportshub.core.domain.common.Resource
 import com.example.sportshub.core.domain.model.Sport
 import com.example.sportshub.core.domain.usecase.SportUseCase
 import androidx.lifecycle.toLiveData

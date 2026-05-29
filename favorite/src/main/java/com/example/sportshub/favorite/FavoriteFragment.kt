@@ -1,6 +1,5 @@
 package com.example.sportshub.favorite
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -35,9 +34,7 @@ class FavoriteFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val sportAdapter = SportAdapter()
         sportAdapter.onItemClick = { selectedData ->
-            val intent = Intent(requireContext(), DetailSportActivity::class.java)
-            intent.putExtra(DetailSportActivity.EXTRA_DATA, selectedData)
-            startActivity(intent)
+            startActivity(DetailSportActivity.createIntent(requireContext(), selectedData))
         }
 
         favoriteViewModel.favoriteSport.observe(viewLifecycleOwner) { dataSport: List<Sport> ->
