@@ -23,6 +23,13 @@
 -keep class com.example.sportshub.core.data.source.remote.response.** { *; }
 -keep class com.example.sportshub.core.data.source.local.entity.** { *; }
 -keep class com.example.sportshub.core.domain.model.** { *; }
+-keep class com.example.sportshub.core.di.CoreModuleKt { *; }
+-keep class com.example.sportshub.core.domain.common.Resource { *; }
+-keep class com.example.sportshub.core.domain.common.Resource$* { *; }
+-keep interface com.example.sportshub.core.domain.repository.ISportRepository { *; }
+-keep interface com.example.sportshub.core.domain.usecase.SportUseCase { *; }
+-keep class com.example.sportshub.core.domain.usecase.SportInteractor { *; }
+-keep class com.example.sportshub.core.ui.SportAdapter { *; }
 -keep interface com.example.sportshub.core.data.source.remote.network.ApiService { *; }
 -keepattributes Signature,*Annotation*
 
@@ -36,3 +43,5 @@
 -dontwarn org.bouncycastle.jsse.**
 -dontwarn org.conscrypt.**
 -dontwarn org.openjsse.**
+
+-dontwarn java.lang.invoke.StringConcatFactory
