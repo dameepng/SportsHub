@@ -11,15 +11,6 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                "proguard-rules.pro"
-            )
-        }
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -44,5 +35,4 @@ dependencies {
     implementation(libs.koin.android)
     androidTestImplementation(libs.androidx.junit.ktx)
     testImplementation(libs.junit)
-    androidTestImplementation(libs.junit.junit)
 }
