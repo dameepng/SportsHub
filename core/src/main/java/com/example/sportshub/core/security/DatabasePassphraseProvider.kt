@@ -19,6 +19,7 @@ object DatabasePassphraseProvider {
     private const val KEY_ALIAS = "sporthub_database_key"
     private const val PREFS_NAME = "sporthub_secure_database"
     private const val PASSPHRASE_KEY = "encrypted_passphrase"
+    private const val FALLBACK_PASSPHRASE_KEY = "fallback_passphrase"
     private const val PASSPHRASE_SIZE = 32
     private const val GCM_TAG_SIZE = 128
 
@@ -28,13 +29,25 @@ object DatabasePassphraseProvider {
         val storedPassphrase = prefs.getString(PASSPHRASE_KEY, null)
 
         if (storedPassphrase != null) {
-            return decrypt(storedPassphrase)
+            runCatching { decrypt(storedPassphrase) }
+                .onSuccess { return it }
+        }
+
+        prefs.getString(FALLBACK_PASSPHRASE_KEY, null)?.let {
+            return Base64.decode(it, Base64.NO_WRAP)
         }
 
         val passphrase = ByteArray(PASSPHRASE_SIZE)
         SecureRandom().nextBytes(passphrase)
+
+        val encryptedPassphrase = runCatching { encrypt(passphrase) }.getOrNull()
         prefs.edit {
-            putString(PASSPHRASE_KEY, encrypt(passphrase))
+            if (encryptedPassphrase != null) {
+                putString(PASSPHRASE_KEY, encryptedPassphrase)
+                remove(FALLBACK_PASSPHRASE_KEY)
+            } else {
+                putString(FALLBACK_PASSPHRASE_KEY, Base64.encodeToString(passphrase, Base64.NO_WRAP))
+            }
         }
 
         return passphrase
@@ -84,7 +97,6 @@ object DatabasePassphraseProvider {
             .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
             .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
             .setRandomizedEncryptionRequired(true)
-            .setUnlockedDeviceRequired(true)
             .build()
 
         keyGenerator.init(keySpec)

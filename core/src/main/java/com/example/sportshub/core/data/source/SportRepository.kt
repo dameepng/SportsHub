@@ -9,8 +9,8 @@ import com.example.sportshub.core.domain.model.Sport
 import com.example.sportshub.core.domain.repository.ISportRepository
 import com.example.sportshub.core.utils.AppExecutors
 import com.example.sportshub.core.utils.DataMapper
+import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.schedulers.Schedulers
 
 class SportRepository(
     private val remoteDataSource: RemoteDataSource,
@@ -32,14 +32,10 @@ class SportRepository(
             override fun createCall(): Flowable<ApiResponse<SportResponse>> =
                 remoteDataSource.getAllSport(sport, country)
 
-            override fun saveCallResult(data: SportResponse) {
-                data.teams?.let {
-                    val sportList = DataMapper.mapResponsesToEntities(it.filterNotNull())
-                    localDataSource.deleteNonFavoriteSport()
-                        .andThen(localDataSource.insertSport(sportList))
-                        .subscribeOn(Schedulers.io())
-                        .subscribe()
-                }
+            override fun saveCallResult(data: SportResponse): Completable {
+                val sportList = DataMapper.mapResponsesToEntities(data.teams.orEmpty().filterNotNull())
+                return localDataSource.deleteNonFavoriteSport()
+                    .andThen(localDataSource.insertSport(sportList))
             }
 
         }.asFlowable()

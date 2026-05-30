@@ -3,6 +3,7 @@ package com.example.sportshub.core.data.source
 import com.example.sportshub.core.data.source.remote.network.ApiResponse
 import com.example.sportshub.core.domain.common.Resource
 import io.reactivex.BackpressureStrategy
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -39,7 +40,7 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
 
     protected abstract fun createCall(): Flowable<ApiResponse<RequestType>>
 
-    protected abstract fun saveCallResult(data: RequestType)
+    protected abstract fun saveCallResult(data: RequestType): Completable
 
     private fun fetchFromNetwork() {
         val apiResponse = createCall()
@@ -52,11 +53,10 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
             .subscribe({ response ->
                 when (response) {
                     is ApiResponse.Success -> {
-                        saveCallResult(response.data)
-                        val dbSource = loadFromDB()
-                        val dbSub = dbSource.subscribeOn(Schedulers.io())
+                        val dbSub = saveCallResult(response.data)
+                            .andThen(loadFromDB().take(1))
+                            .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .take(1)
                             .subscribe({ newData ->
                                 result.onNext(Resource.Success(newData))
                             }, { error ->
